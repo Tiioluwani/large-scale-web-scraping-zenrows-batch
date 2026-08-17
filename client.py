@@ -1,10 +1,10 @@
 """
-Shared HTTP client and helpers for the Zenrows Batch API test scripts.
+Shared HTTP client and helpers for the Zenrows Batch API example scripts.
 
 Loads ZENROWS_API_KEY from a .env file (see .env.example), wraps the
 Batch REST API (https://docs.zenrows.com/batch/developer-guide-restapi),
-and provides small utilities the individual test_*.py scripts share:
-job submission, polling, paginated result collection, reruns, webhook
+and provides small utilities the individual numbered scripts share: job
+submission, polling, paginated result collection, reruns, webhook
 management, the client-side cost estimator, and result persistence to
 results/.
 """
@@ -43,7 +43,7 @@ def _check_api_key():
     if not API_KEY:
         raise RuntimeError(
             "ZENROWS_API_KEY is not set. Copy .env.example to .env and add "
-            "your key before running any test_*.py script."
+            "your key before running any of the numbered example scripts."
         )
 
 
