@@ -77,6 +77,31 @@ def submit_job(payload, idempotency_key=None):
     return resp.json()
 
 
+def add_tasks(job_id, tasks, last_batch=False):
+    """POST /jobs/{job_id}/tasks - append tasks to an open (queue-mode) job.
+    Set last_batch=True on the final call to close the job for new tasks."""
+    body = {"tasks": tasks, "last_batch": last_batch}
+    resp = requests.post(
+        f"{BASE_URL}/jobs/{job_id}/tasks",
+        headers=_headers({"Content-Type": "application/json"}),
+        json=body,
+    )
+    _raise_for_status(resp)
+    return resp.json() if resp.content else None
+
+
+def list_jobs(status=None, cursor=None):
+    """GET /jobs - list jobs, optionally filtered by latest_run status."""
+    params = {}
+    if status:
+        params["status"] = status
+    if cursor:
+        params["cursor"] = cursor
+    resp = requests.get(f"{BASE_URL}/jobs", headers=_headers(), params=params)
+    _raise_for_status(resp)
+    return resp.json()
+
+
 def get_job(job_id):
     """GET /jobs/{job_id} - job + latest_run.status/stats."""
     resp = requests.get(f"{BASE_URL}/jobs/{job_id}", headers=_headers())

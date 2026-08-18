@@ -67,6 +67,9 @@ ZENROWS_API_KEY=your_api_key
 ├── 06_diy_comparison.py     # Plain asyncio/aiohttp comparison (no Zenrows)
 ├── 07_csv_upload.py         # CSV upload flow
 ├── 08_scheduling.py         # Scheduled jobs: create, pause, replace
+├── 09_open_jobs.py          # Open (queue-mode) job: add_tasks + last_batch
+├── 10_scale_run.py          # Large-scale run with a credit safety cap
+├── 11_scale_monitor.py      # Reattachable, network-resilient safety monitor
 ├── requirements.txt
 ├── .env.example
 └── .gitignore
@@ -96,6 +99,9 @@ Each script is standalone: `python <script_name>.py`. Run whichever matches what
 - **`06_diy_comparison.py`** — reach for this to see the plain-Python equivalent of script 01, with no Zenrows involved.
 - **`07_csv_upload.py`** — reach for this when your URL list lives in a CSV rather than inline in code.
 - **`08_scheduling.py`** — reach for this to set up a recurring job and see how pausing/replacing a schedule works.
+- **`09_open_jobs.py`** — reach for this to see a job built incrementally with `add_tasks` instead of submitted all at once.
+- **`10_scale_run.py`** — reach for this to push a job to real scale (100,000 tasks by default) with a credit-ceiling safety stop built in.
+- **`11_scale_monitor.py`** — reach for this to see that same safety-cap loop hardened against network failures, and to reattach a monitor to a job that's already running.
 
 ## Output
 
@@ -103,7 +109,10 @@ Each script is standalone: `python <script_name>.py`. Run whichever matches what
 - Each script also saves the raw JSON it received from the API into `results/`, named by script number (e.g. `01_cloudflare_job_final.json`), so you can inspect the exact payloads.
 - `01_cloudflare_target.py` additionally saves the downloaded page content as `results/01_cloudflare_content.html`.
 - `07_csv_upload.py` additionally saves the CSV it built and uploaded as `results/07_csv_input.csv`.
-- Scripts that submit jobs (`01`, `02`, `05`, `07`, `08`) spend real credits on your account.
+- `09_open_jobs.py` saves each step of the open-job flow separately: the create response (or the 503 error, if open jobs aren't available yet), each `add_tasks` batch response, and the job state after each batch.
+- `10_scale_run.py` additionally saves live progress on every poll (`results/10_scale_progress.json`), plus the final job state and a results summary.
+- `11_scale_monitor.py` saves that same shape of progress/final-state/results files under an `11_scale_monitor_` prefix, plus its own submit response if it had to start a fresh job.
+- Scripts that submit jobs (`01`, `02`, `05`, `07`, `08`, `09`) spend real credits on your account. `10_scale_run.py` and `11_scale_monitor.py` also spend real credits and, run at full scale (100,000 tasks by default), can take hours to reach a terminal state — expect a long-running process, not something that finishes in seconds.
 
 ## Technologies
 
